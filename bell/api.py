@@ -6,6 +6,7 @@ import json
 import sys
 import time
 import os
+from bell.consts import SCREEN_HEIGHT, SCREEN_WIDTH
 from ctypes import *
 
 try:
@@ -14,12 +15,11 @@ except ImportError:
     import _thread as thread
 
 
-SCREEN_WIDTH = 320
-SCREEN_HEIGHT = 240
 WS_ADDR = 'ws://127.0.0.1:18282'
 
 def on_message(ws, message):
-    print('recv {}'.format(message))
+    # print('recv {}'.format(message))
+    None
 
 def on_error(ws, error):
     print(error)
@@ -180,7 +180,7 @@ class BellControl():
         params = {'tpe': 'ui.update',
                   'from': 'libbell',
                   'target': 'ui',
-                  'component-data': {'type': 'circle',
+                  'component-data': {'type': 'line',
                                      'clear': clear,
                                      'data': {'x1': x1,
                                               'y1': y1,
@@ -222,11 +222,23 @@ class BellControl():
         self.send(json.dumps(params))
         
 
-    def set_window_background(self, r, g, b, a):
+    # def set_window_background(self, r, g, b, a):
+    #     params = {'tpe': 'ui.update',
+    #               'from': 'libbell',
+    #               'target': 'ui',
+    #               'component-data': {'type': 'text-msg',
+    #                                  'data': {'content': msg},}}
+    #     self.send(json.dumps(params))
+        
+    def clear_display(self, clear_rect=None):
         params = {'tpe': 'ui.update',
                   'from': 'libbell',
                   'target': 'ui',
-                  'component-data': {'type': 'text-msg',
-                                     'data': {'content': msg},}}
+                  'component-data': {'type': 'clear',
+                                     'clear-rect': clear_rect,
+                                     'clear': True,}}
         self.send(json.dumps(params))
         
+    def display_image(self, path):
+        None
+
