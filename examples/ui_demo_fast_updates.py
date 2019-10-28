@@ -3,8 +3,16 @@
 from bell import api
 import time
 import math
+import psutil
+
 
 offset = (180, 120)
+
+def cpu_and_ram():
+    p_cpu = psutil.cpu_percent()
+    p_ram = psutil.virtual_memory().percent
+    return p_cpu, p_ram
+
 
 # http://mathworld.wolfram.com/LogarithmicSpiral.html
 def gen_spirals():
@@ -26,6 +34,7 @@ def draw_spiral(ctx):
         x2, y2 = (offset[0] +x, offset[1]+y)
         ctx.display_line(x1, y1, x2, y2)
         print('show line ({}, {}) - ({}, {})'.format(x1, y1, x2, y2))
+        print('cpu / ram usage: {} / {}'.format(*cpu_and_ram()))
         x1, y1 = x2, y2
         time.sleep(0.01)
         if (x1, y1) > tuple(i*2 for i in offset) or (x1, y1) < (0, 0):
@@ -45,6 +54,7 @@ def draw_bouncing_ball(ctx):
         if down:
             for y in path:
                 ctx.display_circle(x, y, r, fill=True, clear=True)
+                print('cpu / ram usage: {} / {}'.format(*cpu_and_ram())) 
                 time.sleep(max(0.01 * (240-y) / 240 * x / 100, 0.005))
                 x += 0.01
             down = False
@@ -54,17 +64,19 @@ def draw_bouncing_ball(ctx):
         else:
             for y in path:
                 ctx.display_circle(x, y, r, fill=True, clear=True)
+                print('cpu / ram usage: {} / {}'.format(*cpu_and_ram())) 
                 time.sleep(max(0.01 * (240-y) / 240 * x /100, 0.005))
                 x += 0.05
             down = True
-        
+            
 def show_all_component():
     ctx = api.BellControl()
     try:
         ctx.init()
         ctx.clear_display()
-        # draw_spiral(ctx)
-        # time.sleep(2)
+        draw_spiral(ctx)
+        time.sleep(2)
+        ctx.clear_display()
         draw_bouncing_ball(ctx)
     finally:
         ctx.close()
