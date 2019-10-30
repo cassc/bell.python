@@ -8,6 +8,7 @@ import time
 import os
 from bell.consts import SCREEN_HEIGHT, SCREEN_WIDTH
 from ctypes import *
+import bell.ui as ui
 
 try:
     import thread
@@ -28,6 +29,12 @@ def on_error(ws, error):
 def on_open(ws):
     print('ws opened')
 
+def prepare_ui_data(data):
+    return {'tpe': 'ui.update',
+            'from': 'libbell',
+            'target': 'ui',
+            'component-data': data}
+
 class BellControl():
     def maybe_start_ws(self):
         if not self.ws:
@@ -36,7 +43,7 @@ class BellControl():
     def start_websocket(self):
         websocket.enableTrace(True)
 
-        def on_close(ws):
+        def on_close(_):
             print('ws closed')
             self.ws=None
             
@@ -80,6 +87,7 @@ class BellControl():
     def __init__(self, handler=None):
         self.handler = handler
         self.lib = None
+        self.ws=None
         self.ws_init()
         # self.lib_init()
         
@@ -92,7 +100,8 @@ class BellControl():
                 self.display_text(msg, 120, 120)
                 break
             time.sleep(1)
-        
+            print('waiting ws')
+            
     def send(self, msg):
         self.maybe_start_ws()
         if self.ws_ready():
@@ -133,88 +142,28 @@ class BellControl():
             self.ws.close()
 
     def display_text(self, content, x, y, clear=False, max_width=SCREEN_WIDTH, color='black', font_size=12):
-        params = {'tpe': 'ui.update',
-                  'from': 'libbell',
-                  'target': 'ui',
-                  'component-data': {'type': 'text-msg',
-                                     'clear': clear,
-                                     'data': {'content': content,
-                                              'x': x,
-                                              'y': y,
-                                              'max-width': max_width,
-                                              'color': color,
-                                              'font-size': font_size,
-                                     },}}
-        self.send(json.dumps(params))
+        data = ui.make_text(content, x, y, clear=clear, max_width=max_width, color=color, font_size=font_size)
+        self.send(json.dumps(prepare_ui_data(data)))
 
     def display_rect(self, x, y, w, h, clear=False, fill=False, color='black'):
-        params = {'tpe': 'ui.update',
-                  'from': 'libbell',
-                  'target': 'ui',
-                  'component-data': {'type': 'rect',
-                                     'clear': clear,
-                                     'data': {'x': x,
-                                              'y': y,
-                                              'w': w,
-                                              'h': h,
-                                              'fill': fill,
-                                              'color': color,
-                                     },}}
-        self.send(json.dumps(params))
+        data = ui.make_rect(x, y, w, h, clear=clear, fill=fill, color=color)
+        self.send(json.dumps(prepare_ui_data(data)))
 
     def display_circle(self, x, y, r, clear=False, fill=False, color='black'):
-        params = {'tpe': 'ui.update',
-                  'from': 'libbell',
-                  'target': 'ui',
-                  'component-data': {'type': 'circle',
-                                     'clear': clear,
-                                     'data': {'x': x,
-                                              'y': y,
-                                              'r': r,
-                                              'fill': fill,
-                                              'color': color,
-                                     },}}
-        self.send(json.dumps(params))
+        data = ui.make_circle(x, y, r, clear=clear, fill=fill, color=color)
+        self.send(json.dumps(prepare_ui_data(data)))
 
     def display_line(self, x1, y1, x2, y2, clear=False, color='black'):
-        params = {'tpe': 'ui.update',
-                  'from': 'libbell',
-                  'target': 'ui',
-                  'component-data': {'type': 'line',
-                                     'clear': clear,
-                                     'data': {'x1': x1,
-                                              'y1': y1,
-                                              'x2': x2,
-                                              'y2': y2,
-                                              'color': color,
-                                     },}}
-        self.send(json.dumps(params))
+        data = ui.make_line(x1, y1, x2, y2, clear=clear, color=color)
+        self.send(json.dumps(prepare_ui_data(data)))
 
     def display_path(self, path, clear=False, fill=False, color='black'):
-        params = {'tpe': 'ui.update',
-                  'from': 'libbell',
-                  'target': 'ui',
-                  'component-data': {'type': 'path',
-                                     'clear': clear,
-                                     'data': {'path': path,
-                                              'fill': fill,
-                                              'color': color,
-                                     },}}
-        self.send(json.dumps(params))
+        data = ui.make_path(path, clear=clear, fill=fill, color=color)
+        self.send(json.dumps(prepare_ui_data(data)))
 
     def display_dot(self, x, y, clear=False, color='black'):
-        params = {'tpe': 'ui.update',
-                  'from': 'libbell',
-                  'target': 'ui',
-                  'component-data': {'type': 'rect',
-                                     'clear': clear,
-                                     'data': {'x': x,
-                                              'y': y,
-                                              'w': 1,
-                                              'h': 1,
-                                              'color': color,
-                                     },}}
-        self.send(json.dumps(params))
+        data = ui.make_dot(x, y, clear=clear, color=color)
+        self.send(json.dumps(prepare_ui_data(data)))
 
     def send_close_user_ui(self):
         params = {'tpe': 'ui.close',
@@ -232,32 +181,18 @@ class BellControl():
     #     self.send(json.dumps(params))
         
     def clear_display(self, clear_rect=None):
-        params = {'tpe': 'ui.update',
-                  'from': 'libbell',
-                  'target': 'ui',
-                  'component-data': {'type': 'clear',
-                                     'clear-rect': clear_rect,
-                                     'clear': True,}}
-        self.send(json.dumps(params))
+        data = ui.make_clear(clear_rect=clear_rect)
+        self.send(json.dumps(prepare_ui_data(data)))
 
-    def show_sequence(self, xs):
-        params = {'tpe': 'ui.update',
-                  'from': 'libbell',
-                  'target': 'ui',
-                  'xs': xs}
-        self.send(json.dumps(params))
-        
+    def show_sequence(self, xs, clear_first=False):
+        if clear_first:
+            xs = [{'type': 'clear', 'clear': True,}] +xs
+            params = {'tpe': 'ui.update',
+                      'from': 'libbell',
+                      'target': 'ui',
+                      'xs': xs}
+            self.send(json.dumps(params))
+            
     def display_image(self, path):
         None
 
-
-def make_dot(x, y, color='black', clear=False):
-    return {'type': 'rect',
-            'clear': clear,
-            'data': {'x': x,
-                     'y': y,
-                     'w': 1,
-                     'h': 1,
-                     'fill': True,
-                     'color': color,
-            },}

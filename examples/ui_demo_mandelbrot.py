@@ -1,5 +1,6 @@
 # coding: utf-8
 
+# 本例演示使用show_sequence显示mandelbrot图片，其中包含屏幕所有320×240个像素点
 # c.f. https://www.geeksforgeeks.org/mandelbrot-fractal-set-visualization-in-python/
 
 from bell import api
@@ -19,33 +20,32 @@ def rgb_conv(i):
 # function defining a mandelbrot 
 def mandelbrot(x, y): 
     c0 = complex(x, y) 
-    c = 0
-    for i in range(1, 1000): 
+    c = complex(x, y)
+    for i in range(1, 50):
+        c = c * c + c0 
         if abs(c) > 2: 
             return rgb_conv(i) 
-        c = c * c + c0 
     return (0, 0, 0)
-
 
 def draw_mandelbrot():
     ctx = api.BellControl()
     try:
         ctx.init()
-        
         x_point = []
-        scale = 25
-        for x in range(window_size[0]*scale):
-            if x%scale != 0:
-                continue
-            for y in range(window_size[1]*100):
-                if y%scale != 0:
-                    continue
-                r, g, b = mandelbrot(x, y)
-                if (r,g,b) != (0,0,0):
-                    color = "rgb({},{},{})".format(r, g, b)
-                    x_point.append(api.make_dot(x/scale, y/scale, color=color))
-        ctx.clear_display()
-        ctx.show_sequence(x_point)
+        start= time.time()
+        scale = 480
+        print('preparing mandelbrot points')
+        for x in range(window_size[0]):
+            for y in range(window_size[1]):
+                r, g, b = mandelbrot(x/scale, y/scale)
+                color = "rgb({},{},{})".format(r, g, b)
+                x_point.append(api.make_dot(x, y, color=color))
+        print('gen points {} time: {}'.format(len(x_point), time.time() - start))
+        # 由于点列数据量较大，直接使用clear_display会导致界面清屏后出现空白界面
+        # 使用show_sequence的clear_first参数可避免此情况
+        # ctx.clear_display() 
+        ctx.show_sequence(x_point, clear_first=True)
+        
         time.sleep(40)
     finally:
         ctx.close()

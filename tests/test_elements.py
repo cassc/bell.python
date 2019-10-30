@@ -276,7 +276,7 @@ x_elements = [
 ]
 
 
-def show_all_component():
+def test_display_component():
     ctx = api.BellControl()
     ctx.init()
 
@@ -299,4 +299,4 @@ def show_all_component():
 
     ctx.close()
 
-show_all_component()
+
