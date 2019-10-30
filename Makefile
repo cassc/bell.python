@@ -1,3 +1,3 @@
 install:
-	sudo pip3 uninstall bell
-	sudo pip3 install .
+	pip3 uninstall bell -y
+	pip3 install . --user

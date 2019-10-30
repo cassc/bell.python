@@ -32,14 +32,14 @@ class BellControl():
     def maybe_start_ws(self):
         if not self.ws:
             self.start_websocket()
-    
+            
     def start_websocket(self):
         websocket.enableTrace(True)
 
         def on_close(ws):
             print('ws closed')
             self.ws=None
-        
+            
         ws = websocket.WebSocketApp(self.addr,
                                     on_message = on_message,
                                     on_error = on_error,
@@ -206,15 +206,16 @@ class BellControl():
         params = {'tpe': 'ui.update',
                   'from': 'libbell',
                   'target': 'ui',
-                  'component-data': {'type': 'dot',
+                  'component-data': {'type': 'rect',
                                      'clear': clear,
                                      'data': {'x': x,
                                               'y': y,
+                                              'w': 1,
+                                              'h': 1,
                                               'color': color,
                                      },}}
         self.send(json.dumps(params))
 
-        
     def send_close_user_ui(self):
         params = {'tpe': 'ui.close',
                   'from': 'libbell',
@@ -238,7 +239,25 @@ class BellControl():
                                      'clear-rect': clear_rect,
                                      'clear': True,}}
         self.send(json.dumps(params))
+
+    def show_sequence(self, xs):
+        params = {'tpe': 'ui.update',
+                  'from': 'libbell',
+                  'target': 'ui',
+                  'xs': xs}
+        self.send(json.dumps(params))
         
     def display_image(self, path):
         None
 
+
+def make_dot(x, y, color='black', clear=False):
+    return {'type': 'rect',
+            'clear': clear,
+            'data': {'x': x,
+                     'y': y,
+                     'w': 1,
+                     'h': 1,
+                     'fill': True,
+                     'color': color,
+            },}
