@@ -3,7 +3,7 @@
 # 本例演示使用show_sequence显示mandelbrot图片，其中包含屏幕所有320×240个像素点
 # c.f. https://www.geeksforgeeks.org/mandelbrot-fractal-set-visualization-in-python/
 
-from bell import api
+from bell import api,ui
 import time
 from numpy import complex, array 
 import colorsys 
@@ -39,7 +39,7 @@ def draw_mandelbrot():
             for y in range(window_size[1]):
                 r, g, b = mandelbrot(x/scale, y/scale)
                 color = "rgb({},{},{})".format(r, g, b)
-                x_point.append(api.make_dot(x, y, color=color))
+                x_point.append(ui.make_dot(x, y, color=color))
         print('gen points {} time: {}'.format(len(x_point), time.time() - start))
         # 由于点列数据量较大，直接使用clear_display会导致界面清屏后出现空白界面
         # 使用show_sequence的clear_first参数可避免此情况
