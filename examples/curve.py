@@ -17,7 +17,7 @@ def update_xy():
 
 def draw_curve(ctx):
     update_xy()
-    pth = [[i, xy[i]] for i in range(0, 320)]
+    pth = [[i, 240-xy[i]] for i in range(0, 320)]
     ctx.display_path(pth, clear = True)
 
             
