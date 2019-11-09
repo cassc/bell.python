@@ -187,11 +187,11 @@ class BellControl():
     def show_sequence(self, xs, clear_first=False):
         if clear_first:
             xs = [{'type': 'clear', 'clear': True,}] +xs
-            params = {'tpe': 'ui.update',
-                      'from': 'libbell',
-                      'target': 'ui',
-                      'xs': xs}
-            self.send(json.dumps(params))
+        params = {'tpe': 'ui.update',
+                  'from': 'libbell',
+                  'target': 'ui',
+                  'xs': xs}
+        self.send(json.dumps(params))
             
     def display_image(self, path):
         None
