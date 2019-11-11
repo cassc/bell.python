@@ -19,9 +19,17 @@ except ImportError:
 
 WS_ADDR = 'ws://127.0.0.1:18282'
 
-def on_message(ws, message):
-    # print('recv {}'.format(message))
-    None
+def on_message(ws, msg):
+    try:
+        req = json.loads(msg)
+        if 'target' in req and req['target'] == 'api':
+            tpe = req['tpe']
+            data = req['data']
+            if tpe=='event.keydown':
+                keycode = data['keycode']
+                # TODO
+    except Exception as e:
+        print('handle message error: {}'.format(e))
 
 def on_error(ws, error):
     print(error)
