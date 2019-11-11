@@ -8,6 +8,7 @@ import time
 import os
 from bell.consts import SCREEN_HEIGHT, SCREEN_WIDTH
 from ctypes import *
+import math
 import bell.ui as ui
 
 try:
@@ -145,14 +146,19 @@ class BellControl():
         data = ui.make_text(content, x, y, clear=clear, max_width=max_width, color=color, font_size=font_size)
         self.send(json.dumps(prepare_ui_data(data)))
 
-    def display_rect(self, x, y, w, h, clear=False, fill=False, color='black'):
-        data = ui.make_rect(x, y, w, h, clear=clear, fill=fill, color=color)
+    def display_rect(self, x, y, w, h, r=0, clear=False, fill=False, color='black'):
+        data = ui.make_rect(x, y, w, h, r, clear=clear, fill=fill, color=color)
         self.send(json.dumps(prepare_ui_data(data)))
 
     def display_circle(self, x, y, r, clear=False, fill=False, color='black'):
         data = ui.make_circle(x, y, r, clear=clear, fill=fill, color=color)
         self.send(json.dumps(prepare_ui_data(data)))
 
+    def display_ellipse(self, x, y, rx, ry, rotation=0, start_angle=0, end_angle=math.pi*2, clear=False, fill=False, color='black'):
+        data = ui.make_ellipse(x, y, rx, ry, rotation, start_angle, end_angle, clear, fill, color)
+        self.send(json.dumps(prepare_ui_data(data)))
+
+        
     def display_line(self, x1, y1, x2, y2, clear=False, color='black'):
         data = ui.make_line(x1, y1, x2, y2, clear=clear, color=color)
         self.send(json.dumps(prepare_ui_data(data)))

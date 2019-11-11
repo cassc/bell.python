@@ -1,4 +1,5 @@
 from bell.consts import SCREEN_HEIGHT, SCREEN_WIDTH
+import math
 
 def make_text(content, x, y, clear=False, max_width=SCREEN_WIDTH, color='black', font_size=12):
     return {'type': 'text-msg',
@@ -11,13 +12,28 @@ def make_text(content, x, y, clear=False, max_width=SCREEN_WIDTH, color='black',
                      'font-size': font_size,
             },}
 
-def make_rect(x, y, w, h, clear=False, fill=False, color='black'):
+def make_rect(x, y, w, h, r=0, clear=False, fill=False, color='black'):
     return {'type': 'rect',
             'clear': clear,
             'data': {'x': x,
                      'y': y,
                      'w': w,
                      'h': h,
+                     'r': r,
+                     'fill': fill,
+                     'color': color,
+            },}
+
+def make_ellipse(x, y, rx, ry, rotation=0, start_angle=0, end_angle=math.pi*2, clear=False, fill=False, color='black'):
+    return {'type': 'ellipse',
+            'clear': clear,
+            'data': {'x': x,
+                     'y': y,
+                     'rx': rx,
+                     'ry': ry,
+                     'rotation': rotation,
+                     'start-angle': start_angle,
+                     'end-angle': end_angle,
                      'fill': fill,
                      'color': color,
             },}

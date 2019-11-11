@@ -12,12 +12,13 @@ def make_face():
     (x, y, r) = (240, 60, 40)
     ileft = (x - 15, y-15, 10)
     iright = (x + 15, y-15, 10)
-    mouth = (x, y+20, 15)
+    mouth = (x, y+20, 10, 5)
     a = ui.make_circle(x, y, r, clear=False)
-    il = ui.make_circle(*ileft, clear=False)
-    ir = ui.make_circle(*iright, clear=False)
-    m =ui.make_circle(*mouth, clear=False)
-    return [a, il, ir, m]
+    il = ui.make_circle(*ileft, color='red', fill=True, clear=False)
+    ir = ui.make_circle(*iright, color='red', fill=True, clear=False)
+    m =ui.make_ellipse(*mouth, color='green', fill=True, clear=False)
+    box = ui.make_rect(x-45, y-45, 90, 90, 10)
+    return [a, il, ir, m, box]
     
 
 def draw_bouncing_ball(ctx):
@@ -64,7 +65,6 @@ def draw_bouncing_ball(ctx):
         sq.append(ui.make_circle(*ball, fill=True))
         ctx.show_sequence(sq, clear_first=True)
         time.sleep((250-y) /500.0)
-        
         
 def start():
     ctx = api.BellControl()
