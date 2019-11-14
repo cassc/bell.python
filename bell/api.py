@@ -2,6 +2,7 @@
 
 # https://github.com/websocket-client/websocket-client
 import websocket
+import traceback
 import json
 import sys
 import time
@@ -19,24 +20,12 @@ except ImportError:
 
 WS_ADDR = 'ws://127.0.0.1:18282'
 
-def on_message(ws, msg):
-    try:
-        req = json.loads(msg)
-        if 'target' in req and req['target'] == 'api':
-            tpe = req['tpe']
-            data = req['data']
-            if tpe=='event.keydown':
-                keycode = data['keycode']
-                # TODO
-    except Exception as e:
-        print('handle message error: {}'.format(e))
+def default_event_handler(ctx, event):
+    print('Event received: {}'.format(event))
 
 def on_error(ws, error):
     print(error)
 
-
-def on_open(ws):
-    print('ws opened')
 
 def prepare_ui_data(data):
     return {'tpe': 'ui.update',
@@ -44,7 +33,34 @@ def prepare_ui_data(data):
             'target': 'ui',
             'component-data': data}
 
-class BellControl():
+def get_file_path():
+    return sys.argv[0]
+
+def on_open(ws):
+    print('ws opened')
+    ws.send(json.dumps({'tpe': 'ui.init',
+                        'from': 'libbell',
+                        'target': 'ui',
+                        'data': {'cmd-path': get_file_path()}}))
+
+
+class BellControl(object):
+    def __init__(self, handler=default_event_handler):
+        def hfn(req):
+            handler(self, req)
+        self.handler = hfn
+        self.lib = None
+        self.ws=None
+        self.ws_init()
+        # self.lib_init()
+    
+    def __enter__(self):
+        return self
+
+    def __exit__(self,  exc_type, exc_val, exc_tb):
+        self.close()
+
+   
     def maybe_start_ws(self):
         if not self.ws:
             self.start_websocket()
@@ -55,6 +71,17 @@ class BellControl():
         def on_close(_):
             print('ws closed')
             self.ws=None
+
+        def on_message(ws, msg):
+            try:
+                req = json.loads(msg)
+                if 'target' in req and req['target'] == 'api':
+                    self.handler(req)
+            except Exception as e:
+                print('handle message error: {}'.format(e))
+                print(traceback.format_exc())
+                
+
             
         ws = websocket.WebSocketApp(self.addr,
                                     on_message = on_message,
@@ -80,7 +107,7 @@ class BellControl():
         print('Load c lib from {}'.format(lib_path))
         lib = cdll.LoadLibrary(lib_path)
 
-        if lib is not None and self.handler is not None:
+        if lib is not None:
             # void register_recvcb(void (*recv_cb)(void *data, uint32_t len));
             REGISTER_RECVCB = CFUNCTYPE(c_void_p, c_char_p, c_uint)
             cb = REGISTER_RECVCB(self.handler)
@@ -92,14 +119,7 @@ class BellControl():
         print('Initialize lib {}, init ret {}'.format('success' if success else 'failed', ret))
         return success
 
-        
-    def __init__(self, handler=None):
-        self.handler = handler
-        self.lib = None
-        self.ws=None
-        self.ws_init()
-        # self.lib_init()
-        
+               
 
     def init(self):
         while True:
@@ -206,7 +226,8 @@ class BellControl():
                   'target': 'ui',
                   'xs': xs}
         self.send(json.dumps(params))
-            
-    def display_image(self, path):
-        None
+
+    def display_image(self, src, x, y, w, h, clear=False):
+        data = ui.make_image(src, x, y, w, h, clear=clear)
+        self.send(json.dumps(prepare_ui_data(data)))
 

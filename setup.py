@@ -7,9 +7,9 @@ config = {
     'description': 'Bell TBOT python API',
     'author': 'cl',
     'packages': ['bell'],
-    'install_requires': ['nose'],
+    'install_requires': ['websocket-client'],
     'author_email': 'chencassc@gmail.com',
-    # 'scripts:': [],
+    'version': "0.0.1",
     'name': 'bell',
 }
 

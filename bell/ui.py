@@ -1,6 +1,9 @@
 from bell.consts import SCREEN_HEIGHT, SCREEN_WIDTH
 import math
 
+def prefix_api_resource_url(uri):
+    return 'http://localhost:7000/public/' + uri
+
 def make_text(content, x, y, clear=False, max_width=SCREEN_WIDTH, color='black', font_size=12):
     return {'type': 'text-msg',
             'clear': clear,
@@ -65,6 +68,16 @@ def make_path(path, clear=False, fill=False, color='black'):
             'data': {'path': path,
                      'fill': fill,
                      'color': color,
+            },}
+
+def make_image(src, x, y, w, h, clear=False):
+    return {'type': 'image',
+            'clear': clear,
+            'data': {'x': x,
+                     'y': y,
+                     'w': w,
+                     'h': h,
+                     'src': prefix_api_resource_url(src),
             },}
 
 
