@@ -13,13 +13,29 @@ y = 120
 p_title = (10, 10)
 i = 0
 
+star_path = [[x, y],
+             [x+20, y+100],
+             [x, y+80],
+             [x-20, y+100],
+]
+
 xs = [[ui.make_text('图片', *p_title),
        ui.make_image('cat.jpg', 10, 40, 120, 120)],
       [ui.make_text('圆', *p_title),
        ui.make_circle(x, y, 10, fill=True)],
-      
+      [ui.make_text('多边形', *p_title),
+       ui.make_path(star_path, fill=True)],
+      [ui.make_text('椭圆', *p_title),
+       ui.make_ellipse(x, y, 60, 40, 0, 0, math.pi, fill=True),
+       ui.make_ellipse(x, y, 60, 40, 0, math.pi, math.pi*2, fill=False)],
+      [ui.make_text('方形', *p_title),
+       ui.make_rect(x, y, 40, 40, 4, fill=True),
+       ui.make_rect(x+40, y, 40, 40),
+       ui.make_rect(x, y+40, 40, 40),
+       ui.make_rect(x+40, y+40, 40, 40, 4, fill=True),]
+      ,
 ]
-    
+
 
 
 def event_handler(ctx, req):
