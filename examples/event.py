@@ -21,13 +21,13 @@ def event_handler(ctx, req):
         return
     ky = req['data']['keycode']
     if ky == 'down':
-        y += 1
+        y += step 
     elif ky == 'up':
-        y -= 1
+        y -= step
     elif ky == 'left':
-        x -= 1
+        x -= step
     elif ky == 'right':
-        x += 1
+        x += step
     txt = ui.make_text(str(req), 20, 20)
     ball = ui.make_circle(x, y, r, fill=True)
     ctx.show_sequence([txt, ball], clear_first=True)
