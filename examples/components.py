@@ -20,7 +20,9 @@ star_path = [[x, y],
 ]
 
 xs = [[ui.make_text('图片', *p_title),
-       ui.make_image('cat.jpg', 10, 40, 120, 120)],
+       ui.make_image('anim.gif', 10, 40, 120, 120)],
+      [ui.make_text('GIF动画', *p_title),
+       ui.make_animation('anim.gif', 0, 0, 320, 240)],
       [ui.make_text('圆', *p_title),
        ui.make_circle(x, y, 10, fill=True)],
       [ui.make_text('多边形', *p_title),

@@ -1,4 +1,3 @@
-from nose.tools import *
 import bell
 
 def setup():

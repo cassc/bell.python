@@ -80,6 +80,16 @@ def make_image(src, x, y, w, h, clear=False):
                      'src': prefix_api_resource_url(src),
             },}
 
+def make_animation(src, x, y, w, h):
+    return {'type': 'gif',
+            'clear': True,
+            'data': {'x': x,
+                     'y': y,
+                     'w': w,
+                     'h': h,
+                     'src': prefix_api_resource_url(src),
+            }}
+
 
 def make_dot(x, y, color='black', clear=False):
     return make_rect(x, y, 1, 1, fill=True, color=color, clear=clear)

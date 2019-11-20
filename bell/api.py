@@ -230,4 +230,8 @@ class BellControl(object):
     def display_image(self, src, x, y, w, h, clear=False):
         data = ui.make_image(src, x, y, w, h, clear=clear)
         self.send(json.dumps(prepare_ui_data(data)))
+        
+    def display_animation(self, src, x, y, w, h):
+        data = ui.make_animation(src, x, y, w, h)
+        self.send(json.dumps(prepare_ui_data(data)))
 
