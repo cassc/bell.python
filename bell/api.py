@@ -1,6 +1,7 @@
 # coding: utf-8
 
 # https://github.com/websocket-client/websocket-client
+import logging
 import websocket
 import traceback
 import json
@@ -17,14 +18,31 @@ try:
 except ImportError:
     import _thread as thread
 
-
 WS_ADDR = 'ws://127.0.0.1:18282'
 
+def init_logging():
+    program_name = sys.argv[0]
+    logfile = '/tmp/{}.log'.format(program_name[:-3].replace('/', '.'))
+    
+    ws_logger = logging.getLogger('websocket')
+    ws_logger.setLevel(logging.INFO)
+
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+    logger.addHandler(logging.FileHandler(logfile, mode='w', encoding='utf8'))
+    return logger
+
+logger = init_logging()
+
+def l_info(msg, *args):
+    global logger
+    logger.info(msg, *args)
+
 def default_event_handler(ctx, event):
-    print('Event received: {}'.format(event))
+    l_info('Event received: {}'.format(event))
 
 def on_error(ws, error):
-    print(error)
+    l_info(error)
 
 
 def prepare_ui_data(data):
@@ -37,12 +55,11 @@ def get_file_path():
     return sys.argv[0]
 
 def on_open(ws):
-    print('ws opened')
+    l_info('ws opened')
     ws.send(json.dumps({'tpe': 'ui.init',
                         'from': 'libbell',
                         'target': 'ui',
                         'data': {'cmd-path': get_file_path()}}))
-
 
 class BellControl(object):
     def __init__(self, handler=default_event_handler):
@@ -69,7 +86,7 @@ class BellControl(object):
         websocket.enableTrace(True)
 
         def on_close(_):
-            print('ws closed')
+            l_info('ws closed')
             self.ws=None
 
         def on_message(ws, msg):
@@ -78,8 +95,8 @@ class BellControl(object):
                 if 'target' in req and req['target'] == 'api':
                     self.handler(req)
             except Exception as e:
-                print('handle message error: {}'.format(e))
-                print(traceback.format_exc())
+                l_info('handle message error: {}'.format(e))
+                l_info(traceback.format_exc())
                 
 
             
@@ -89,9 +106,9 @@ class BellControl(object):
                                     on_close = on_close,
                                     on_open = on_open)
         def run():
-            print('ws connection starting')
+            l_info('ws connection starting')
             ws.run_forever()
-            print('ws connection closed')
+            l_info('ws connection closed')
         self.ws = ws
         thread.start_new_thread(run, ())
 
@@ -104,7 +121,7 @@ class BellControl(object):
         lib_path = os.environ.get('LIBC_PATH')
         if lib_path is None:
             lib_path = '/home/firefly/tbot/spi/tbot_lib/lib/libtbot.so'
-        print('Load c lib from {}'.format(lib_path))
+        l_info('Load c lib from {}'.format(lib_path))
         lib = cdll.LoadLibrary(lib_path)
 
         if lib is not None:
@@ -116,7 +133,7 @@ class BellControl(object):
         self.lib = lib
         ret = -1 if lib is None else lib.tbot_lib_init()
         success = lib is not None and ret == 0
-        print('Initialize lib {}, init ret {}'.format('success' if success else 'failed', ret))
+        l_info('Initialize lib {}, init ret {}'.format('success' if success else 'failed', ret))
         return success
 
                
@@ -129,7 +146,7 @@ class BellControl(object):
                 self.display_text(msg, 120, 120)
                 break
             time.sleep(1)
-            print('waiting ws')
+            l_info('waiting ws')
             
     def send(self, msg):
         self.maybe_start_ws()
@@ -162,7 +179,7 @@ class BellControl(object):
         
         if not ret:
             return repr(data_out.raw)
-        print('查询巡线传感器状态失败，ret {}' % ret)
+        l_info('查询巡线传感器状态失败，ret {}' % ret)
         return None
 
     def close(self):

@@ -16,10 +16,14 @@ def event_handler(ctx, req):
     global x
     global y
     global r
-    global step 
-    if req['tpe'] != 'event.keydown':
+    
+    if req['tpe'] not in ['event.keydown', 'event.longpress']:
         return
+
     ky = req['data']['keycode']
+
+    longpress = req['tpe'] == 'event.longpress'
+
     if ky == 'down':
         y += step 
     elif ky == 'up':

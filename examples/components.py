@@ -21,6 +21,8 @@ star_path = [[x, y],
 
 xs = [[ui.make_text('图片', *p_title),
        ui.make_image('anim.gif', 10, 40, 120, 120)],
+      [ui.make_text('文字', *p_title),
+       ui.make_text('文本', 150, 120, font_size=24, color='cyan'),],
       [ui.make_text('GIF动画', *p_title),
        ui.make_animation('anim.gif', 0, 0, 320, 240)],
       [ui.make_text('圆', *p_title),
