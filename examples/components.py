@@ -10,7 +10,7 @@ from random import randint
 x = 180
 y = 120
 
-p_title = (10, 10)
+p_title = (10, 40)
 i = 0
 
 star_path = [[x, y],

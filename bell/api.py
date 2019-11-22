@@ -142,8 +142,8 @@ class BellControl(object):
         while True:
             if self.ready():
                 program_name = sys.argv[0]
-                msg = 'Executing {}'.format(program_name)
-                self.display_text(msg, 120, 120)
+                msg = 'Init success {}'.format(program_name.split('/')[-1])
+                self.display_text(msg, 10, 100)
                 break
             time.sleep(1)
             l_info('waiting ws')
