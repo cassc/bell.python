@@ -83,7 +83,7 @@ class BellControl(object):
             self.start_websocket()
             
     def start_websocket(self):
-        websocket.enableTrace(True)
+        websocket.enableTrace(False)
 
         def on_close(_):
             l_info('ws closed')
