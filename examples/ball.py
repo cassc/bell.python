@@ -3,7 +3,7 @@
 from bell import api
 from bell import ui
 import time
-
+import logging
 
 
 offset = (180, 120)
@@ -67,13 +67,16 @@ def draw_bouncing_ball(ctx):
         time.sleep((250-y) /500.0)
         
 def start():
+    logging.info('程序启动')
     ctx = api.BellControl()
     try:
         ctx.init()
         time.sleep(0.2)
         ctx.clear_display()
+        logging.info('开始绘图')
         draw_bouncing_ball(ctx)
     finally:
         ctx.close()
+        logging.info('结束进程')
 
 start()

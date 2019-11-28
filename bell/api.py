@@ -22,14 +22,17 @@ WS_ADDR = 'ws://127.0.0.1:18282'
 
 def init_logging():
     program_name = sys.argv[0]
-    logfile = '/tmp/{}.log'.format(program_name[:-3].replace('/', '.'))
+    logfile = '/tmp/libbel_{}.log'.format(program_name[:-3].replace('/', '.'))
     
     ws_logger = logging.getLogger('websocket')
     ws_logger.setLevel(logging.INFO)
 
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
-    logger.addHandler(logging.FileHandler(logfile, mode='w', encoding='utf8'))
+    f_format = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+    fhandler = logging.FileHandler(logfile, mode='w', encoding='utf8')
+    fhandler.setFormatter(f_format)
+    logger.addHandler(fhandler)
     return logger
 
 logger = init_logging()
