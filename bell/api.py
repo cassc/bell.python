@@ -20,26 +20,24 @@ except ImportError:
 
 WS_ADDR = 'ws://127.0.0.1:18282'
 
-def init_logging():
-    program_name = sys.argv[0]
-    logfile = '/tmp/libbel_{}.log'.format(program_name[:-3].replace('/', '.'))
+logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO, force=True)
+
+# def init_logging():
+#     program_name = sys.argv[0]
+#     logfile = '/tmp/libbel_{}.log'.format(program_name[:-3].replace('/', '.'))
     
-    ws_logger = logging.getLogger('websocket')
-    ws_logger.setLevel(logging.INFO)
+#     logger = logging.getLogger(__name__)
+#     logger.setLevel(logging.INFO)
+#     f_format = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+#     fhandler = logging.FileHandler(logfile, mode='w', encoding='utf8')
+#     fhandler.setFormatter(f_format)
+#     logger.addHandler(fhandler)
+#     return logger
 
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
-    f_format = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
-    fhandler = logging.FileHandler(logfile, mode='w', encoding='utf8')
-    fhandler.setFormatter(f_format)
-    logger.addHandler(fhandler)
-    return logger
-
-logger = init_logging()
+# logger = init_logging()
 
 def l_info(msg, *args):
-    global logger
-    logger.info(msg, *args)
+    logging.info(msg, *args)
 
 def default_event_handler(ctx, event):
     l_info('Event received: {}'.format(event))
