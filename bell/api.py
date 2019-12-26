@@ -253,3 +253,24 @@ class BellControl(object):
         data = ui.make_animation(src, x, y, w, h)
         self.send(json.dumps(prepare_ui_data(data)))
 
+
+    def play_tone_async(self, tone, duration):
+        self.send(json.dumps({'tpe': 'play.tone',
+            'from': 'libbell',
+            'target': 'be',
+            'data': {'tone': tone,
+                     'duration': duration}}))
+
+    def play_freq_async(self, freq, duration):
+        self.send(json.dumps({'tpe': 'play.freq',
+            'from': 'libbell',
+            'target': 'be',
+            'data': {'freq': freq,
+                     'duration': duration}}))
+
+    def play_audio(self, filename, duration):
+        self.send(json.dumps({'tpe': 'play.audio',
+            'from': 'libbell',
+            'target': 'be',
+            'data': {'filename': filename,
+                     'duration': duration}}))
