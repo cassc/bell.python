@@ -22,6 +22,11 @@ WS_ADDR = 'ws://127.0.0.1:18282'
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO, force=True)
 
+def prepend_resource_path(filename):
+    root = os.environ.get('RES_HOME')
+    return os.path.join(root, filename)
+    
+
 # def init_logging():
 #     program_name = sys.argv[0]
 #     logfile = '/tmp/libbel_{}.log'.format(program_name[:-3].replace('/', '.'))
@@ -254,23 +259,44 @@ class BellControl(object):
         self.send(json.dumps(prepare_ui_data(data)))
 
 
-    def play_tone_async(self, tone, duration):
-        self.send(json.dumps({'tpe': 'play.tone',
-            'from': 'libbell',
-            'target': 'be',
-            'data': {'tone': tone,
-                     'duration': duration}}))
+    def play_note(self, note, octave, duration_millis):
+        self.send(json.dumps({'tpe': 'play.note',
+                              'from': 'libbell',
+                              'target': 'be',
+                              'data': {'note': note,
+                                       'octave': octave,
+                                       'duration_millis': duration_millis}}))
 
-    def play_freq_async(self, freq, duration):
+    def play_freq(self, freq, duration_millis):
         self.send(json.dumps({'tpe': 'play.freq',
-            'from': 'libbell',
-            'target': 'be',
-            'data': {'freq': freq,
-                     'duration': duration}}))
+                              'from': 'libbell',
+                              'target': 'be',
+                              'data': {'freq': freq,
+                                       'duration_millis': duration_millis}}))
 
-    def play_audio(self, filename, duration):
+    def play_audio(self, filename):
+        file = prepend_resource_path(filename)
+        if not os.path.exists(file):
+            raise Exception('未找到文件，请将资源文件放在{}目录'.format(root))
         self.send(json.dumps({'tpe': 'play.audio',
-            'from': 'libbell',
-            'target': 'be',
-            'data': {'filename': filename,
-                     'duration': duration}}))
+                              'from': 'libbell',
+                              'target': 'be',
+                              'data': {'filename': file,}}))
+    def stop_audio(self):
+        self.send(json.dumps({'tpe': 'stop.audio',
+                              'from': 'libbell',
+                              'target': 'be',}))
+
+    def start_recorder(self, filename):
+        file = prepend_resource_path(filename)
+        if os.path.exists(file):
+            raise Exception('文件已存在！')
+        self.send(json.dumps({'tpe': 'start.recorder',
+                              'from': 'libbell',
+                              'target': 'be',
+                              'data': {'filename': prepend_resource_path(filename),}}))
+        
+    def stop_recorder(self):
+        self.send(json.dumps({'tpe': 'stop.recorder',
+                              'from': 'libbell',
+                              'target': 'be',}))

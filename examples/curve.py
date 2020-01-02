@@ -4,7 +4,7 @@ from bell import api
 from bell import ui
 import time
 import math
-from random import randint
+from random import randint, choice
 
 
 offset = (180, 120)

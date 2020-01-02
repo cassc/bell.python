@@ -73,6 +73,7 @@ def start():
         ctx.init()
         time.sleep(0.2)
         ctx.clear_display()
+        ctx.display_text('Preparing ...', 160, 100)
         logging.info('开始绘图')
         draw_bouncing_ball(ctx)
     finally:
