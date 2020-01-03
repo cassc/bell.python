@@ -20,7 +20,7 @@ except ImportError:
 
 WS_ADDR = 'ws://127.0.0.1:18282'
 
-logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO, force=True)
+logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 def prepend_resource_path(filename):
     root = os.environ.get('RES_HOME')

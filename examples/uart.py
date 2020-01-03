@@ -22,11 +22,12 @@ def isNotBlank (myString):
 
 # 处理收到的BASE64编码的数据
 def print_handler(msg):
+    from pprint import pprint
     if isBlank(msg):
         return
-    print('Recv raw msg: {}'.format(msg))
+    pprint('Recv raw msg: {}'.format(msg))
     v = json.loads(base64.urlsafe_b64decode(msg.encode('utf-8')).decode('utf-8'))
-    print('Recv json msg: {}'.format(v))
+    pprint(v)
 
 # 对收到的数据拆分与组包
 def parse_for_msg(ss, handler):
@@ -93,7 +94,7 @@ def run():
     thread.start_new_thread(start_msg_reader, ())
 
     # 查询主控wifi状态
-    msg = {'from':   'ui',
+    msg = {'from':   'ide',
            'tpe':    'wstatus',
            'target': 'be'}
 
@@ -107,7 +108,7 @@ def run():
         prog_content= f.read()
     
     prog_title = 'copyball.py'
-    msg = {'from':   'ui',
+    msg = {'from':   'ide',
            'tpe':    'prog.upload',
            'target': 'be',
            'data': {'content':prog_content,
@@ -116,7 +117,7 @@ def run():
 
     send_request(msg)
 
-    time.sleep(5)
+    time.sleep(20)
     
 run()    
 
