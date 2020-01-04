@@ -96,6 +96,7 @@ def run():
     # 查询主控wifi状态
     msg = {'from':   'ide',
            'tpe':    'wstatus',
+           'nonce': '227',
            'target': 'be'}
 
     send_request(msg)
@@ -104,12 +105,13 @@ def run():
 
 
     # 上传脚本并执行
-    with open('ball.py', 'r') as f:
+    with open('spiral.py', 'r') as f:
         prog_content= f.read()
     
     prog_title = 'copyball.py'
     msg = {'from':   'ide',
            'tpe':    'prog.upload',
+           'nonce': '228',
            'target': 'be',
            'data': {'content':prog_content,
                     'title': prog_title,
