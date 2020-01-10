@@ -8,10 +8,11 @@ import json
 import sys
 import time
 import os
-from bell.consts import SCREEN_HEIGHT, SCREEN_WIDTH
+from bell.consts import *
 from ctypes import *
 import math
 import bell.ui as ui
+from struct import *
 
 try:
     import thread
@@ -75,7 +76,8 @@ class BellControl(object):
         self.lib = None
         self.ws=None
         self.ws_init()
-        # self.lib_init()
+        time.sleep(1)
+        self.lib_init()
     
     def __enter__(self):
         return self
@@ -122,18 +124,22 @@ class BellControl(object):
         self.addr = WS_ADDR
         self.start_websocket()
 
+    def hal_handler(self, data, length):
+        l_info('recv hal {}, {}'.format(data, length))
+        
+        
     def lib_init(self):
         lib = None
         lib_path = os.environ.get('LIBC_PATH')
         if lib_path is None:
-            lib_path = '/home/firefly/tbot/spi/tbot_lib/lib/libtbot.so'
+            lib_path = '/lib/arm-linux-gnueabihf/libtbot.so'
         l_info('Load c lib from {}'.format(lib_path))
         lib = cdll.LoadLibrary(lib_path)
 
         if lib is not None:
             # void register_recvcb(void (*recv_cb)(void *data, uint32_t len));
-            REGISTER_RECVCB = CFUNCTYPE(c_void_p, c_char_p, c_uint)
-            cb = REGISTER_RECVCB(self.handler)
+            REGISTER_RECVCB = CFUNCTYPE(c_void_p, POINTER(XferHdrT), c_uint)
+            cb = REGISTER_RECVCB(self.hal_handler)
             # int tbot_lib_init(void);
             lib.register_recvcb(cb)
         self.lib = lib
@@ -300,3 +306,6 @@ class BellControl(object):
         self.send(json.dumps({'tpe': 'stop.recorder',
                               'from': 'libbell',
                               'target': 'be',}))
+        
+    def tbot_control_coded_motor(self, port, state, period_us, duty_us, timeout_ms):
+        self.lib.tbot_control_coded_motor(port, state, period_us, duty_us, timeout_ms)

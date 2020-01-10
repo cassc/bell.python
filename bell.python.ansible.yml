@@ -1,0 +1,11 @@
+---
+- name: install python library
+  hosts: "fireprod-root"
+  tasks:
+    - name: install bell.python lib
+      command: make install
+      args:
+        chdir: /root/python/
+      register: bout
+    - debug: msg="{{ bout.stdout }}"
+    - debug: msg="{{ bout.stderr }}"
