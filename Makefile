@@ -5,6 +5,6 @@ sync:
 	rsync -av --delete ./examples/ fireprod-root:/home/firefly/examples/
 install:
 	pip3 uninstall bell -y
-	pip3 install .
+	pip3 install . --user
 build-remote: sync
 	ansible-playbook bell.python.ansible.yml

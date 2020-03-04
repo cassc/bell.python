@@ -32,16 +32,16 @@ SCREEN_HEIGHT = 240
  *_) = range(100)
 
 
-class XferHdrT(Structure):
-    _fields_ = [("magic", c_uint8),
-                ("crc16", c_uint16),
-                ("seq", c_uint8),
-                ("appid", c_uint8),
-                ("channel", c_uint8, 5),
-                ("phy_type", c_uint8, 3),
-                ("cmd", c_uint8, 7),
-                ("report", c_uint8, 1),
-                ("rc", c_uint8),
-                ("len", c_uint8),
-                ("data", c_char_p),
-                ]
+# class XferHdrT(Structure):
+#     _fields_ = [("magic", c_uint8),
+#                 ("crc16", c_uint16),
+#                 ("seq", c_uint8),
+#                 ("appid", c_uint8),
+#                 ("channel", c_uint8, 5),
+#                 ("phy_type", c_uint8, 3),
+#                 ("cmd", c_uint8, 7),
+#                 ("report", c_uint8, 1),
+#                 ("rc", c_uint8),
+#                 ("len", c_uint8),
+#                 ("data", c_char_p),
+#                 ]
