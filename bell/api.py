@@ -77,7 +77,7 @@ class BellControl(object):
         self.ws=None
         self.ws_init()
         time.sleep(1)
-        self.lib_init()
+        # self.lib_init()
     
     def __enter__(self):
         return self
