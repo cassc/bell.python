@@ -26,7 +26,10 @@ logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=loggi
 def prepend_resource_path(filename):
     root = os.environ.get('RES_HOME')
     return os.path.join(root, filename)
-    
+
+def hal_handler(buf, length):
+    msg = ''.join([chr(buf[i]) for i in range(length)])
+    l_info('recv hal {} {}'.format(msg, length))
 
 # def init_logging():
 #     program_name = sys.argv[0]
@@ -77,7 +80,7 @@ class BellControl(object):
         self.ws=None
         self.ws_init()
         time.sleep(1)
-        # self.lib_init()
+        self.lib_init()
     
     def __enter__(self):
         return self
@@ -124,10 +127,6 @@ class BellControl(object):
         self.addr = WS_ADDR
         self.start_websocket()
 
-    def hal_handler(self, data, length):
-        l_info('recv hal {}, {}'.format(data, length))
-        
-        
     def lib_init(self):
         lib = None
         lib_path = os.environ.get('LIBC_PATH')
@@ -138,10 +137,11 @@ class BellControl(object):
 
         if lib is not None:
             # void register_recvcb(void (*recv_cb)(void *data, uint32_t len));
-            REGISTER_RECVCB = CFUNCTYPE(c_void_p, POINTER(XferHdrT), c_uint)
-            cb = REGISTER_RECVCB(self.hal_handler)
+            json_handler = CFUNCTYPE(c_void_p, POINTER(c_ubyte), c_uint)
+            cb = json_handler(hal_handler)
             # int tbot_lib_init(void);
             lib.register_recvcb(cb)
+            l_info('TBOT HAL callback registered')
         self.lib = lib
         ret = -1 if lib is None else lib.tbot_lib_init()
         success = lib is not None and ret == 0
@@ -283,6 +283,7 @@ class BellControl(object):
     def play_audio(self, filename):
         file = prepend_resource_path(filename)
         if not os.path.exists(file):
+            root = os.environ.get('RES_HOME')
             raise Exception('未找到文件，请将资源文件放在{}目录'.format(root))
         self.send(json.dumps({'tpe': 'play.audio',
                               'from': 'libbell',

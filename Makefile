@@ -1,8 +1,9 @@
 test:
 	pytest -s  tests/*.py
 sync:
-	rsync -av ./ fireprod-root:python/
-	rsync -av --delete ./examples/ fireprod-root:/home/firefly/examples/
+	rsync -av  --exclude-from=/home/garfield/bin/projects-excluded ./ firefly:python/
+sync-prod:
+	rsync -av  --exclude-from=/home/garfield/bin/projects-excluded ./  firefly-prod:python/
 install:
 	pip3 uninstall bell -y
 	pip3 install . --user
