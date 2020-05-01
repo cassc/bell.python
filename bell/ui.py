@@ -2,9 +2,9 @@ from bell.consts import SCREEN_HEIGHT, SCREEN_WIDTH
 import math
 
 def prefix_api_resource_url(uri):
-    return 'http://localhost:7000/public/' + uri
+    return 'http://localhost:5000/' + uri
 
-def make_text(content, x, y, clear=False, max_width=SCREEN_WIDTH, color='black', font_size=12):
+def make_text(content, x, y, clear=False, max_width=SCREEN_WIDTH, color='white', font_size=12):
     return {'type': 'text-msg',
             'clear': clear,
             'data': {'content': content,
@@ -15,7 +15,7 @@ def make_text(content, x, y, clear=False, max_width=SCREEN_WIDTH, color='black',
                      'font-size': font_size,
             },}
 
-def make_rect(x, y, w, h, r=0, clear=False, fill=False, color='black'):
+def make_rect(x, y, w, h, r=0, clear=False, fill=False, color='white'):
     return {'type': 'rect',
             'clear': clear,
             'data': {'x': x,
@@ -27,7 +27,7 @@ def make_rect(x, y, w, h, r=0, clear=False, fill=False, color='black'):
                      'color': color,
             },}
 
-def make_ellipse(x, y, rx, ry, rotation=0, start_angle=0, end_angle=math.pi*2, clear=False, fill=False, color='black'):
+def make_ellipse(x, y, rx, ry, rotation=0, start_angle=0, end_angle=math.pi*2, clear=False, fill=False, color='white'):
     return {'type': 'ellipse',
             'clear': clear,
             'data': {'x': x,
@@ -42,7 +42,7 @@ def make_ellipse(x, y, rx, ry, rotation=0, start_angle=0, end_angle=math.pi*2, c
             },}
 
 
-def make_circle(x, y, r, clear=False, fill=False, color='black'):
+def make_circle(x, y, r, clear=False, fill=False, color='white'):
     return {'type': 'circle',
             'clear': clear,
             'data': {'x': x,
@@ -52,7 +52,7 @@ def make_circle(x, y, r, clear=False, fill=False, color='black'):
                      'color': color,
             },}
 
-def make_line(x1, y1, x2, y2, clear=False, color='black'):
+def make_line(x1, y1, x2, y2, clear=False, color='white'):
         return  {'type': 'line',
                  'clear': clear,
                  'data': {'x1': x1,
@@ -62,7 +62,7 @@ def make_line(x1, y1, x2, y2, clear=False, color='black'):
                           'color': color,
                  },}
 
-def make_path(path, clear=False, fill=False, color='black'):
+def make_path(path, clear=False, fill=False, color='white'):
     return {'type': 'path',
             'clear': clear,
             'data': {'path': path,
@@ -91,7 +91,7 @@ def make_animation(src, x, y, w, h):
             }}
 
 
-def make_dot(x, y, color='black', clear=False):
+def make_dot(x, y, color='white', clear=False):
     return make_rect(x, y, 1, 1, fill=True, color=color, clear=clear)
 
 def make_clear(clear_rect=None):

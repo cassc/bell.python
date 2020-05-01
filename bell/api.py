@@ -171,32 +171,32 @@ class BellControl():
         if self.ws is not None:
             self.ws.close()
 
-    def display_text(self, content, x, y, clear=False, max_width=SCREEN_WIDTH, color='black', font_size=12):
+    def display_text(self, content, x, y, clear=False, max_width=SCREEN_WIDTH, color='white', font_size=12):
         data = ui.make_text(content, x, y, clear=clear, max_width=max_width, color=color, font_size=font_size)
         self.send(json.dumps(prepare_ui_data(data)))
 
-    def display_rect(self, x, y, w, h, r=0, clear=False, fill=False, color='black'):
+    def display_rect(self, x, y, w, h, r=0, clear=False, fill=False, color='white'):
         data = ui.make_rect(x, y, w, h, r, clear=clear, fill=fill, color=color)
         self.send(json.dumps(prepare_ui_data(data)))
 
-    def display_circle(self, x, y, r, clear=False, fill=False, color='black'):
+    def display_circle(self, x, y, r, clear=False, fill=False, color='white'):
         data = ui.make_circle(x, y, r, clear=clear, fill=fill, color=color)
         self.send(json.dumps(prepare_ui_data(data)))
 
-    def display_ellipse(self, x, y, rx, ry, rotation=0, start_angle=0, end_angle=math.pi*2, clear=False, fill=False, color='black'):
+    def display_ellipse(self, x, y, rx, ry, rotation=0, start_angle=0, end_angle=math.pi*2, clear=False, fill=False, color='white'):
         data = ui.make_ellipse(x, y, rx, ry, rotation, start_angle, end_angle, clear, fill, color)
         self.send(json.dumps(prepare_ui_data(data)))
 
         
-    def display_line(self, x1, y1, x2, y2, clear=False, color='black'):
+    def display_line(self, x1, y1, x2, y2, clear=False, color='white'):
         data = ui.make_line(x1, y1, x2, y2, clear=clear, color=color)
         self.send(json.dumps(prepare_ui_data(data)))
 
-    def display_path(self, path, clear=False, fill=False, color='black'):
+    def display_path(self, path, clear=False, fill=False, color='white'):
         data = ui.make_path(path, clear=clear, fill=fill, color=color)
         self.send(json.dumps(prepare_ui_data(data)))
 
-    def display_dot(self, x, y, clear=False, color='black'):
+    def display_dot(self, x, y, clear=False, color='white'):
         data = ui.make_dot(x, y, clear=clear, color=color)
         self.send(json.dumps(prepare_ui_data(data)))
 
