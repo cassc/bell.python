@@ -19,7 +19,7 @@ try:
 except ImportError:
     import _thread as thread
 
-WS_ADDR = 'ws://127.0.0.1:18282'
+WS_ADDR = 'ws://localhost:18282'
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -71,7 +71,7 @@ def on_open(ws):
                         'target': 'ui',
                         'data': {'cmd-path': get_file_path()}}))
 
-class BellControl(object):
+class BellControl():
     def __init__(self, handler=default_event_handler):
         def hfn(req):
             handler(self, req)
@@ -80,8 +80,7 @@ class BellControl(object):
         self.ws=None
         self.ws_init()
         time.sleep(1)
-        self.lib_init()
-    
+            
     def __enter__(self):
         return self
 
@@ -89,7 +88,7 @@ class BellControl(object):
         self.close()
 
    
-    def maybe_start_ws(self):
+    def __maybe_start_ws__(self):
         if not self.ws:
             self.start_websocket()
             
@@ -103,7 +102,7 @@ class BellControl(object):
         def on_message(ws, msg):
             try:
                 req = json.loads(msg)
-                if 'target' in req and req['target'] == 'api':
+                if ('target' in req) and ('api' in req['target']):
                     self.handler(req)
             except Exception as e:
                 l_info('handle message error: {}'.format(e))
@@ -127,28 +126,6 @@ class BellControl(object):
         self.addr = WS_ADDR
         self.start_websocket()
 
-    def lib_init(self):
-        lib = None
-        lib_path = os.environ.get('LIBC_PATH')
-        if lib_path is None:
-            lib_path = '/lib/arm-linux-gnueabihf/libtbot.so'
-        l_info('Load c lib from {}'.format(lib_path))
-        lib = cdll.LoadLibrary(lib_path)
-
-        if lib is not None:
-            # void register_recvcb(void (*recv_cb)(void *data, uint32_t len));
-            json_handler = CFUNCTYPE(c_void_p, POINTER(c_ubyte), c_uint)
-            cb = json_handler(hal_handler)
-            # int tbot_lib_init(void);
-            lib.register_recvcb(cb)
-            l_info('TBOT HAL callback registered')
-        self.lib = lib
-        ret = -1 if lib is None else lib.tbot_lib_init()
-        success = lib is not None and ret == 0
-        l_info('Initialize lib {}, init ret {}'.format('success' if success else 'failed', ret))
-        return success
-
-               
 
     def init(self):
         while True:
@@ -161,7 +138,7 @@ class BellControl(object):
             l_info('waiting ws')
             
     def send(self, msg):
-        self.maybe_start_ws()
+        self.__maybe_start_ws__()
         if self.ws_ready():
             self.ws.send(msg)
             return True
@@ -169,30 +146,25 @@ class BellControl(object):
 
     def ready(self):
         return self.ws_ready()
-            
+    
     def ws_ready(self):
         return self.ws and self.ws.sock
 
-    def get_lib(self):
-        if self.lib is None:
-            raise Exception('Library not loaded')
-        return self.lib
     
     def servo_control(self, port, angle):
-        lib = self.get_lib()
-        return lib.tbot_control_servo_motor(port, angle)
+        # todo
+        pass
+    
+    def async_query_ultrasonic(self, port):
+        '''从超声波感器读取距离'''
+        self.send(json.dumps({'tpe': 'hal.us.read',
+                              'from': 'libbell',
+                              'target': 'be',
+                              'data': port}))
         
-
-    def query_sensor_line(self, port):
-        lib = self.get_lib()
-        data_len = 2
-        data_out = create_string_buffer(data_len)
-        ret = lib.tbot_query_sensor_line_following(port, data_out, data_len)
-        
-        if not ret:
-            return repr(data_out.raw)
-        l_info('查询巡线传感器状态失败，ret {}' % ret)
-        return None
+    def async_query_sensor_line(self, port):
+        # todo
+        pass
 
     def close(self):
         self.send_close_user_ui()
