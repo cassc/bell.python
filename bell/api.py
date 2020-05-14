@@ -161,11 +161,29 @@ class BellControl():
                               'from': 'libbell',
                               'target': 'be',
                               'data': port}))
+
+    def async_query_color(self, port):
+        '''从颜色感器读取RGB值'''
+        self.send(json.dumps({'tpe': 'hal.col.read',
+                              'from': 'libbell',
+                              'target': 'be',
+                              'data': port}))
+        
         
     def async_query_sensor_line(self, port):
         # todo
         pass
+    
+    def async_control_coded_motor(self, port, state, period_us, duty_us):
+        self.send(json.dumps({'tpe': 'hal.mot.ctrl',
+                              'from': 'libbell',
+                              'target': 'be',
+                              'data': dict(port=port,
+                                           state=state,
+                                           period=period_us,
+                                           duty=duty_us)}))
 
+    
     def close(self):
         self.send_close_user_ui()
         if self.ws is not None:
@@ -280,5 +298,3 @@ class BellControl():
                               'from': 'libbell',
                               'target': 'be',}))
         
-    def tbot_control_coded_motor(self, port, state, period_us, duty_us, timeout_ms):
-        self.lib.tbot_control_coded_motor(port, state, period_us, duty_us, timeout_ms)
